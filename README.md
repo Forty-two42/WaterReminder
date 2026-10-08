@@ -29,15 +29,29 @@
 
 ## 快速开始
 
-### 方式一：下载现成 exe（推荐）
+> **本仓库暂不提供预编译好的 exe**，请按下面的方式自行打包或直接运行源码。
+> 另外注意：程序运行后**不会弹出主窗口**，而是静默驻留系统托盘（首次运行会弹一个气泡说明）。
+> 如果托盘区看不到水滴图标，点任务栏右下角的 `^` 展开隐藏图标区域，把图标拖到常显区即可。
 
-到 [Releases](../../releases) 页面下载 `WaterReminder.exe`，双击即可运行，无需安装 Python 或任何运行库。
+### 方式一：打包成 exe（推荐）
 
-> 首次运行时 Windows SmartScreen 可能提示"未知发布者"，点击「更多信息」→「仍要运行」即可（exe 未做代码签名）。
+```bash
+git clone https://github.com/Forty-two42/WaterReminder.git
+cd WaterReminder
+pip install pystray pillow pyinstaller
+python make_icon.py
+pyinstaller --noconfirm --clean --onefile --windowed ^
+    --name WaterReminder --icon water.ico ^
+    --hidden-import pystray._win32 main.py
+```
 
-**程序启动后不会弹出主窗口**，而是静默驻留系统托盘（首次运行会弹一个气泡说明）。如果托盘区看不到图标，点任务栏的 `^` 展开隐藏图标区域，把水滴图标拖到常显区即可。
+产物在 `dist\WaterReminder.exe`，单文件约 18 MB。拷到任意 Windows 机器上双击即可运行，无需安装 Python 或任何运行库。
 
-### 方式二：从源码运行
+也可以直接双击 `build.bat` 一键完成上述所有步骤。
+
+> exe 未做代码签名，首次运行时 Windows SmartScreen 可能提示"未知发布者"，点「更多信息」→「仍要运行」即可。
+
+### 方式二：从源码直接运行
 
 ```bash
 # 需要 Python 3.9+（Windows 版，且必须带 tkinter）
@@ -46,19 +60,6 @@ cd WaterReminder
 pip install pystray pillow
 python main.py
 ```
-
-### 方式三：自己打包 exe
-
-```bash
-pip install pystray pillow pyinstaller
-python make_icon.py
-pyinstaller --noconfirm --clean --onefile --windowed ^
-    --name WaterReminder --icon water.ico ^
-    --hidden-import pystray._win32 main.py
-# 产物在 dist\WaterReminder.exe
-```
-
-也可以直接双击 `build.bat` 一键完成上述步骤。
 
 ## 使用说明
 

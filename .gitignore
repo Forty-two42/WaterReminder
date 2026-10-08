@@ -1,0 +1,28 @@
+# 构建产物
+build/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# 虚拟环境
+.venv/
+.venv311/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# 系统
+Thumbs.db
+Desktop.ini
+desktop.ini
+
+# 运行时生成
+*.log

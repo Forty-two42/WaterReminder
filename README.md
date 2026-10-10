@@ -36,7 +36,6 @@
 ### 方式一：打包成 exe（推荐）
 
 ```bash
-git clone https://github.com/Forty-two42/WaterReminder.git
 cd WaterReminder
 pip install pystray pillow pyinstaller
 python make_icon.py
@@ -55,7 +54,6 @@ pyinstaller --noconfirm --clean --onefile --windowed ^
 
 ```bash
 # 需要 Python 3.9+（Windows 版，且必须带 tkinter）
-git clone https://github.com/Forty-two42/WaterReminder.git
 cd WaterReminder
 pip install pystray pillow
 python main.py

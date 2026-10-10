@@ -5,14 +5,27 @@ cd /d %~dp0
 
 set PY=.venv311\Scripts\python.exe
 
-if not exist "%PY%" (
-    echo [!] 未找到构建环境 %PY%
-    echo     请先执行:
-    echo     "C:\UE_Engine\gsunreal_p4\gs_unreal\Windows\Engine\Binaries\ThirdParty\Python3\Win64\python.exe" -m venv .venv311
-    echo     .venv311\Scripts\python.exe -m pip install pystray pillow pyinstaller
+rem --- 虚拟环境不存在时, 自动查找 Python 3 并创建 ---
+if exist "%PY%" goto env_ok
+
+echo [i] 未找到构建环境 .venv311, 开始自动创建 ...
+
+set "BASE_PY="
+py -3 -c "import sys" >nul 2>nul && set "BASE_PY=py -3"
+if not defined BASE_PY (
+    python -c "import sys; sys.exit(0 if sys.version_info >= (3,) else 1)" >nul 2>nul && set "BASE_PY=python"
+)
+if not defined BASE_PY (
+    echo [!] 未找到可用的 Python 3, 请先安装后重试:
+    echo     winget install --id Python.Python.3.11 --scope user
+    echo     或到 https://www.python.org/downloads/ 下载安装
     exit /b 1
 )
 
+%BASE_PY% -m venv .venv311 || exit /b 1
+"%PY%" -m pip install --disable-pip-version-check -r requirements.txt || exit /b 1
+
+:env_ok
 echo [1/2] 生成图标 water.ico ...
 "%PY%" make_icon.py || exit /b 1
 

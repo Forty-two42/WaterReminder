@@ -46,7 +46,7 @@ pyinstaller --noconfirm --clean --onefile --windowed ^
 
 产物在 `dist\WaterReminder.exe`，单文件约 18 MB。拷到任意 Windows 机器上双击即可运行，无需安装 Python 或任何运行库。
 
-也可以直接双击 `build.bat` 一键完成上述所有步骤。
+也可以直接双击 `build.bat` 一键完成上述所有步骤。脚本无需预先配置：首次运行会自动创建虚拟环境 `.venv311` 并安装 `requirements.txt` 里的依赖，前提只是系统里装有 Python 3.9+（找不到时会提示安装命令）。
 
 > exe 未做代码签名，首次运行时 Windows SmartScreen 可能提示"未知发布者"，点「更多信息」→「仍要运行」即可。
 
@@ -102,7 +102,7 @@ python main.py
 WaterReminder/
 ├── main.py                  # 主程序（GUI + 托盘 + 计时 + 注册表）
 ├── make_icon.py             # 调 main.py 的绘制函数生成 multi-size ico
-├── build.bat                # 一键打包脚本
+├── build.bat                # 一键打包脚本（自动创建虚拟环境并装依赖）
 ├── requirements.txt         # 运行/打包依赖
 ├── water.ico                # 应用图标（由 make_icon.py 生成）
 ├── test_smoke.py            # 冒烟测试：跑通弹窗/设置/注册表/计时，并截图核对
@@ -115,6 +115,7 @@ WaterReminder/
 
 - Windows 10 / 11（x64）
 - 使用 exe：无任何额外依赖
+- 自行打包：Python 3.9+（同下），双击 `build.bat` 即可，脚本自动创建虚拟环境并安装依赖
 - 从源码运行：Python 3.9+，且该 Python 必须包含 tkinter
   （python.org 官方安装包默认带；Microsoft Store 版和部分精简版可能没有）
 

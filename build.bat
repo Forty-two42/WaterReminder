@@ -16,10 +16,29 @@ if not defined BASE_PY (
     python -c "import sys; sys.exit(0 if sys.version_info >= (3,) else 1)" >nul 2>nul && set "BASE_PY=python"
 )
 if not defined BASE_PY (
-    echo [!] 未找到可用的 Python 3, 请先安装后重试:
-    echo     winget install --id Python.Python.3.11 --scope user
-    echo     或到 https://www.python.org/downloads/ 下载安装
-    exit /b 1
+    echo [i] 未检测到 Python, 尝试用 winget 自动安装 Python 3.11 ...
+    where winget >nul 2>nul || (
+        echo [!] 未找到 winget, 请手动安装 Python 后重试:
+        echo     winget install --id Python.Python.3.11 --scope user
+        echo     或到 https://www.python.org/downloads/ 下载安装
+        exit /b 1
+    )
+    winget install --id Python.Python.3.11 --scope user --silent --accept-source-agreements --accept-package-agreements || (
+        echo [!] winget 安装 Python 失败, 请手动安装后重试
+        exit /b 1
+    )
+    set "PATH=%LOCALAPPDATA%\Programs\Python\Python311;%LOCALAPPDATA%\Programs\Python\Python311\Scripts;%PATH%"
+    set "PY311=%LOCALAPPDATA%\Programs\Python\Python311\python.exe"
+    if exist "%PY311%" (
+        set "BASE_PY=%PY311%"
+    ) else (
+        py -3 -c "import sys" >nul 2>nul && set "BASE_PY=py -3"
+    )
+    if not defined BASE_PY (
+        echo [!] 安装完成但未找到 Python, 请重开终端后重试
+        exit /b 1
+    )
+    echo [i] Python 安装完成
 )
 
 %BASE_PY% -m venv .venv311 || exit /b 1

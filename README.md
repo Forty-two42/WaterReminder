@@ -3,6 +3,7 @@
   <h1>喝水提醒小助手</h1>
   <p><b>Water Reminder</b> · 常驻 Windows 系统托盘的喝水提醒工具</p>
   <p>单文件 exe · 免安装 · 免运行库 · 无需管理员权限</p>
+  <p><a href="https://github.com/Forty-two42/WaterReminder/releases/latest"><b>下载最新版 exe</b></a> · <a href="https://github.com/Forty-two42/WaterReminder/releases">查看全部 Release</a></p>
 </div>
 
 ---
@@ -32,11 +33,20 @@
 
 ## 快速开始
 
-> **本仓库暂不提供预编译好的 exe**（`dist/` 已被 `.gitignore` 忽略），请按下面的方式自行打包或直接运行源码。
+> **推荐直接下载预编译 exe**：每个版本都在 [GitHub Releases](https://github.com/Forty-two42/WaterReminder/releases) 附上 `WaterReminder.exe`，无需 Python、无需自行打包。仓库本身不存放二进制（`dist/` 已被 `.gitignore` 忽略）。
 > 另外注意：程序运行后**不会弹出主窗口**，而是静默驻留系统托盘（首次运行会弹一个气泡说明）。
 > 如果托盘区看不到水滴图标，点任务栏右下角的 `^` 展开隐藏图标区域，把图标拖到常显区即可。
 
-### 方式一：打包成 exe（推荐）
+### 方式一：下载预编译 exe（推荐）
+
+1. 打开 [Releases 页面](https://github.com/Forty-two42/WaterReminder/releases/latest)，下载 `WaterReminder.exe`（约 18 MB，Windows 10 / 11 x64）。
+2. 放到任意固定目录后双击运行。免安装、免运行库、无需管理员权限。
+3. 首次运行 Windows SmartScreen 可能提示「未知发布者」（exe 未做代码签名），点「更多信息」→「仍要运行」即可；也可先按 Release 说明里的 SHA-256 校验文件完整性。
+4. 程序不弹主窗口，直接去系统托盘找水滴图标，右键即可打开菜单。
+
+升级时覆盖旧 exe 即可，配置不会丢；但**覆盖前请先从托盘退出旧进程**，详见「发布与更新」。
+
+### 方式二：自行打包成 exe
 
 ```bash
 cd WaterReminder
@@ -49,11 +59,11 @@ pyinstaller --noconfirm --clean --onefile --windowed ^
 
 产物在 `dist\WaterReminder.exe`，单文件约 18 MB。拷到任意 Windows 机器上双击即可运行，无需安装 Python 或任何运行库。
 
-也可以直接双击 `build.bat` 一键完成上述所有步骤。脚本无需预先配置：首次运行会自动创建虚拟环境 `.venv311` 并安装 `requirements.txt` 里的依赖，前提只是系统里装有 Python 3.9+（找不到时会提示安装命令）。
+也可以直接双击 `build.bat` 一键完成上述所有步骤。脚本在 `.venv311` 不存在时会自动创建虚拟环境并安装 `requirements.txt` 里的依赖；如果系统里连 Python 都找不到，它会尝试通过 `winget` 自动安装 Python 3.11（**这一步会联网装软件**，不想如此的话先自行装好 Python 3.9+）。建议在项目目录开一个终端运行 `.\build.bat`，让窗口留着看输出——双击时窗口一闪而过，构建失败不容易发现。判断是否成功，第一眼看 `dist\WaterReminder.exe` 的修改时间有没有变。
 
-> exe 未做代码签名，首次运行时 Windows SmartScreen 可能提示"未知发布者"，点「更多信息」→「仍要运行」即可。
+> 产物未做代码签名，首次运行时 Windows SmartScreen 可能提示「未知发布者」，点「更多信息」→「仍要运行」即可。
 
-### 方式二：从源码直接运行
+### 方式三：从源码直接运行
 
 ```bash
 # 需要 Python 3.9+（Windows 版，且必须带 tkinter）
@@ -139,7 +149,7 @@ python main.py
   （这样托盘图标和 exe 图标同源，改一处即可）。
 - **DPI 感知**：`shcore.SetProcessDpiAwareness(1)` 配合 `tk scaling = dpi / 72`，
   让窗口在 125% / 150% 缩放的屏幕上不发虚。
-- **打包**：PyInstaller `--onefile --windowed`，产物约 18 MB。
+- **打包**：PyInstaller `--onefile --windowed`，产物约 18 MB，经 GitHub Releases 分发。
 
 ## 项目结构
 
@@ -156,10 +166,22 @@ WaterReminder/
 └── docs/                    # README 图片资源
 ```
 
+## 发布与更新
+
+预编译 exe 通过 [GitHub Releases](https://github.com/Forty-two42/WaterReminder/releases) 分发，仓库里只放源码。首个 Release 为 `v1.0.0`（对应免打扰与可靠性重构这一版），每个 Release 页面会附上：
+
+- `WaterReminder.exe` — 单文件可执行文件，直接双击运行
+- 正文里的 SHA-256 校验值，以及该版本的变更说明
+
+**升级步骤**：先从托盘右键 → 退出旧程序，再用新 exe 覆盖原文件，然后双击启动。配置存在 `%APPDATA%\WaterReminder\config.json`，与 exe 分离，覆盖不会丢失提醒间隔和免打扰设置。
+
+> 如果没退出旧进程就直接双击新 exe，单实例机制会让新进程静默退出，你看到的托盘菜单仍是旧版的——这是「升级了却没变化」最常见的原因。
+> 开机自启记录的是 exe 的**绝对路径**，如果把 exe 挪到别处，需要重新勾一次托盘菜单的「开机自启」。
+
 ## 环境要求
 
 - Windows 10 / 11（x64）
-- 使用 exe：无任何额外依赖
+- 使用 exe（从 Releases 下载）：无任何额外依赖
 - 自行打包：Python 3.9+（同下），双击 `build.bat` 即可，脚本自动创建虚拟环境并安装依赖
 - 从源码运行：Python 3.9+，且该 Python 必须包含 tkinter
   （python.org 官方安装包默认带；Microsoft Store 版和部分精简版可能没有）
@@ -177,6 +199,13 @@ WaterReminder/
 **睡醒之后立刻弹窗 / 或者过了很久才弹？**
 计时按绝对时刻判断：睡眠期间系统时钟继续走，唤醒后若已过触发时刻会立即提醒，这是预期行为。
 弹窗没被点掉之前计时保持冻结，点「已喝水」或「5 分钟后再提醒」后重新计时。
+
+**下载的 exe 被 Windows 拦下 / 提示「未知发布者」？**
+exe 未做代码签名，SmartScreen 会提示，点「更多信息」→「仍要运行」即可。担心文件被篡改的话，用 Release 页面给出的 SHA-256 校验一下：
+`Get-FileHash .\WaterReminder.exe -Algorithm SHA256`。
+
+**换了新版 exe，托盘里怎么还是没有「免打扰」？**
+先确认 `dist\WaterReminder.exe` 的修改时间确实是新的；再打开任务管理器看有没有残留的 `WaterReminder.exe` 进程——有就全部结束后重新双击。单实例机制会让后启动的那个静默退出，界面仍是旧进程画的。
 
 **开机自启勾了没用？**
 自启记录的是 exe 的绝对路径。如果你把 exe 挪到别处，需要重新勾一次。
@@ -196,3 +225,4 @@ WaterReminder/
 - 单实例互斥体改用 `use_last_error` 并把句柄提到模块级。
 - 新增免打扰：时段（含跨午夜）、一键暂停、全屏检测，以及配套的托盘子菜单和设置窗配置区。
 - 托盘一次性提示（如「好样的！」）加了短暂压制，不会被下一拍倒计时立刻盖掉。
+- 新增 GitHub Releases 预编译 exe 分发，无需自行打包即可使用。
